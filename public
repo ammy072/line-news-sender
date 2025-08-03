@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ส่งข่าวพิธี</title>
+</head>
+<body>
+  <h1>ส่งข่าวพิธีไปยัง LINE OA</h1>
+  <form method="POST" action="/send-news">
+    <label>ชื่องาน:<br/>
+      <input type="text" name="title" required />
+    </label><br/><br/>
+    <label>สถานที่:<br/>
+      <input type="text" name="location" required />
+    </label><br/><br/>
+    <label>วันที่:<br/>
+      <input type="date" name="date" required />
+    </label><br/><br/>
+    <label>กิจกรรม:<br/>
+      <textarea name="activities" rows="3" required></textarea>
+    </label><br/><br/>
+    <label>ผู้เปิดงาน:<br/>
+      <input type="text" name="host" />
+    </label><br/><br/>
+    <label>ผู้ร่วมงาน:<br/>
+      <input type="text" name="participants" />
+    </label><br/><br/>
+    <label>ประธานสงฆ์:<br/>
+      <input type="text" name="chiefMonk" />
+    </label><br/><br/>
+    <label>ประธานฆราวาส:<br/>
+      <input type="text" name="chiefLay" />
+    </label><br/><br/>
+    <label>วัตถุประสงค์:<br/>
+      <textarea name="purpose" rows="2"></textarea>
+    </label><br/><br/>
+    <button type="submit">ส่งข่าว</button>
+  </form>
+</body>
+</html>
