@@ -4,42 +4,60 @@ const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
-app.use(bodyParser.json());
 
-app.post('/send', async (req, res) => {
+// ให้ Express อ่านข้อมูลจากฟอร์ม (แบบ x-www-form-urlencoded)
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// ✅ ให้ Express เสิร์ฟหน้าเว็บจากโฟลเดอร์ public (เช่น index.html)
+app.use(express.static('public'));
+
+// ✅ เมื่อกด Submit จากฟอร์ม HTML จะ POST มาที่ /send-news
+app.post('/send-news', async (req, res) => {
   const {
-    eventName, location, date, activity,
-    opener, participants, monkLeader,
-    layLeader, purpose
+    title,
+    location,
+    date,
+    activities,
+    host,
+    participants,
+    chiefMonk,
+    chiefLay,
+    purpose
   } = req.body;
 
-  const message = 
-`📢 งานพิธี: ${eventName}
-📍 สถานที่: ${location}
-📅 วันที่: ${date}
-🕯 กิจกรรม: ${activity}
-🙇‍♂️ ผู้เปิดงาน: ${opener}
-🤝 ผู้ร่วมงาน: ${participants}
-🧘‍♂️ ประธานสงฆ์: ${monkLeader}
-🙏 ประธานฆราวาส: ${layLeader}
-🎯 วัตถุประสงค์: ${purpose}`;
+  const message = `
+📢 ข่าวงานพิธี
+• ชื่องาน: ${title}
+• สถานที่: ${location}
+• วันที่: ${date}
+• กิจกรรม: ${activities}
+• ผู้เปิดงาน: ${host}
+• ผู้ร่วมงาน: ${participants}
+• ประธานสงฆ์: ${chiefMonk}
+• ประธานฆราวาส: ${chiefLay}
+• วัตถุประสงค์: ${purpose}
+  `;
 
   try {
-    await axios.post('https://api.line.me/v2/bot/message/broadcast', {
+    await axios.post('https://api.line.me/v2/bot/message/push', {
+      to: process.env.LINE_OA_ID,
       messages: [{ type: 'text', text: message }]
     }, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': \`Bearer \${process.env.LINE_CHANNEL_ACCESS_TOKEN}\`
+        'Authorization': Bearer ${process.env.LINE_CHANNEL_TOKEN}
       }
     });
 
-    res.send({ status: 'ok' });
+    res.send('✅ ส่งข่าวไปยัง LINE OA เรียบร้อยแล้ว');
   } catch (err) {
-    console.error(err.response?.data || err.message);
-    res.status(500).send({ error: 'ส่งไม่สำเร็จ' });
+    console.error('❌ LINE API error:', err.message);
+    res.status(500).send('เกิดข้อผิดพลาดในการส่งข่าวไป LINE');
   }
 });
 
+// ✅ เริ่มรันเซิร์ฟเวอร์บน Render
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(\`Server running on port \${PORT}\`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
+});
